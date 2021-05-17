@@ -3,37 +3,36 @@ from random import randrange
 import numpy as np
 
 
+# Base version of Relief with binary classification https://arxiv.org/pdf/1711.08421v1.pdf
 class Relief:
-    def __init__(self, data: np.ndarray, classes: np.ndarray, iterations: int):
+    def __init__(self, iterations: int = 100):
+        self.iter = iterations
+        self.k = 1
+
+    def fit(self, data: np.ndarray, classes: np.ndarray) -> np.ndarray:
         if data.shape[0] != classes.shape[0]:
             raise ValueError("data and class shapes not equals!")
 
         if data.shape[0] == classes.shape[0] == 0:
             raise ValueError("zero data shapes!")
 
-        self.data = data
-        self.classes = classes
-        self.iter = iterations
-        self.k = 1
-
-    def fit(self) -> np.ndarray:
-        w = np.array([0.] * self.data.shape[1])
+        w = np.array([0.] * data.shape[1])
 
         for i in range(self.iter):
-            random = randrange(self.data.shape[0])
+            random = randrange(data.shape[0])
 
-            h, m = self._nn(self.data, self.classes, random)
+            h, m = self._nn(data, classes, random)
 
             w += np.array([
-                self._diff(f, self.data[random], m) / self.iter
-                - self._diff(f, self.data[random], h) / self.iter for f in range(len(w))
+                self._diff(data, f, data[random], m) / self.iter
+                - self._diff(data, f, data[random], h) / self.iter for f in range(len(w))
             ])
 
         return w
 
-    def _diff(self, feature_index: int, a: np.ndarray, b: np.ndarray) -> float:
-        rmax = np.amax(self.data[:, feature_index])
-        rmin = np.amin(self.data[:, feature_index])
+    def _diff(self, data: np.ndarray, feature_index: int, a: np.ndarray, b: np.ndarray) -> float:
+        rmax = np.amax(data[:, feature_index])
+        rmin = np.amin(data[:, feature_index])
 
         return np.abs(a[feature_index] - b[feature_index]) / (rmax - rmin)
 
