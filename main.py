@@ -1,3 +1,4 @@
+from IterativeRelief import IterativeRelief
 from Parser import parse_csv
 from RReliefF import RReliefF
 from Relief import Relief
@@ -23,6 +24,12 @@ def test_rrelieff(data_t, classes_t):
         print(relief.fit())
 
 
+def test_iterative_relief(data_t, classes_t):
+    relief = IterativeRelief(data_t, classes_t)
+    for i in range(10):
+        print(relief.fit()[1])
+
+
 def test_turf(data_t, classes_t):
     for i in range(10):
         relief = TuRF(data_t, classes_t, iterations=16, knn=2, turf_iteration_count=3, delete_features_per_iteration=1)
@@ -35,4 +42,4 @@ def test_turf(data_t, classes_t):
 
 if __name__ == '__main__':
     data, classes = parse_csv("data/test-turf-data.csv")
-    test_turf(data, classes)
+    test_iterative_relief(data, classes)
