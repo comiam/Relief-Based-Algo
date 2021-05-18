@@ -29,14 +29,13 @@ def test_rrelieff(data_t, classes_t):
 
 
 def test_iterative_relief(data_t, classes_t):
-    relief = IterativeRelief()
-    return np.array([relief.fit(data_t, classes_t) for i in range(10)]).mean(axis=0)
+    relief = IterativeRelief(kernel_width=50)
+    return relief.fit(data_t, classes_t)[1]
 
 
 def test_irelief(data_t, classes_t):
-    relief = IRelief(kernel_width=1)
-    for i in range(10):
-        print(relief.fit(data_t, classes_t).tolist())
+    relief = IRelief(kernel_width=7)
+    return relief.fit(data_t, classes_t)
 
 
 def test_turf(data_t, classes_t, df):
@@ -54,8 +53,8 @@ if __name__ == '__main__':
 
     classes = split_classes(classes)
     # test_turf(data, classes, df)
-    res = test_iterative_relief(data, classes)
-
+    res = test_irelief(data, classes)
+    # print(res)
     ind_res = np.argsort(res)
 
     for i in ind_res:

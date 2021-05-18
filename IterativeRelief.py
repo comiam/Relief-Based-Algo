@@ -47,6 +47,8 @@ class IterativeRelief:
 
         v = np.zeros(I, dtype=float)
         dist_k = self._compute_kernel_ds(data, old_w)
+        #print(dist_k)
+        #input()
         for n in range(data.shape[0]):
             sm = self._compute_sample_margin(data, n, dist_k, hits, misses)
             g_n = self._compute_outlier_prob(data, dist_k, n, misses[n])
@@ -73,9 +75,9 @@ class IterativeRelief:
     def _compute_kernel_ds(self, data: np.ndarray, w: np.ndarray) -> np.ndarray:
         d = np.zeros((data.shape[0], data.shape[0]), dtype=float)
         for i in range(data.shape[0]):
-            for j in range(i + 1, data.shape[0]):
+            for j in range(data.shape[0]):
                 d[i][j] = self._w_norm(data[i] - data[j], w)
-                d[j][i] = d[i][j]
+                #print(d[i][j])
         dk = np.exp(-d / self.kernel_width)
 
         return dk

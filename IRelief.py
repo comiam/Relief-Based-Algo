@@ -4,7 +4,7 @@ from numpy import linalg as la
 from IterativeRelief import IterativeRelief
 
 
-# IRelief - evolution of iterative relief: https://ieeexplore.ieee.org/document/5342431/references#references
+# IRelief - evolution of iterative relief: https://ieeexplore.ieee.org/document/5342431
 class IRelief(IterativeRelief):
     def __init__(self, kernel_width: float = 10.0, stop_criterion: float = 0.001, reg_param: float = 1.0):
         super().__init__(1, kernel_width, stop_criterion)
@@ -38,13 +38,11 @@ class IRelief(IterativeRelief):
         while True:
             v = old_v - lr * ((self.reg_param * ones - self._compute_margin(data, hits, misses, old_w)) * old_v)
             w = v ** 2
-
             old_v = v
 
             if la.norm(w - old_w, 2) <= self.stop_criterion:
                 old_w = w
                 break
-
             old_w = w
 
         return old_w
@@ -56,6 +54,7 @@ class IRelief(IterativeRelief):
 
         for n in range(data.shape[0]):
             z = self._compute_sample_margin(data, n, dist_k, hits, misses)
+            print(z)
             exponent = np.exp(-1 * np.array([old_w[j] * z[j] for j in range(I)]).sum())
             coeff = exponent / (1 + exponent)
             margin += coeff * z
