@@ -27,8 +27,8 @@ class IRelief(IterativeRelief):
             raise ValueError("zero data shapes!")
 
         I = data.shape[1]
-        old_w = np.zeros(I)
-        old_v = np.ones(I)
+        old_w = np.ones(I, dtype=float)
+        old_v = np.ones(I, dtype=float)
 
         misses, hits = self._find_misses_hits(classes)
         lr = 0.07  # FIXME must realize line search optimization

@@ -27,7 +27,7 @@ class IterativeRelief:
             raise ValueError("data and class shapes not equals!")
 
         it = 0
-        w_old = np.array([1 / data.shape[1]] * data.shape[1])
+        w_old = np.array([1.0 / data.shape[1]] * data.shape[1], dtype=float)
 
         misses, hits = self._find_misses_hits(classes)
         for i in range(self.iteration_count):
