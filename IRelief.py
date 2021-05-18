@@ -6,7 +6,8 @@ from IterativeRelief import IterativeRelief
 
 # IRelief - evolution of iterative relief: https://ieeexplore.ieee.org/document/5342431
 class IRelief(IterativeRelief):
-    def __init__(self, kernel_width: float = 10.0, stop_criterion: float = 0.001, reg_param: float = 1.0):
+    def __init__(self, lr: float = 0.07, kernel_width: float = 10.0, stop_criterion: float = 0.001,
+                 reg_param: float = 1.0):
         super().__init__(1, kernel_width, stop_criterion)
         if kernel_width <= 0:
             raise ValueError("Kernel width less than zero!")
@@ -14,10 +15,13 @@ class IRelief(IterativeRelief):
             raise ValueError("Stop criterion less than zero!")
         if reg_param <= 0:
             raise ValueError("Regularization parameter less than zero!")
+        if lr <= 0:
+            raise ValueError("Learning rate less than zero!")
 
         self.kernel_width = kernel_width
         self.stop_criterion = stop_criterion
         self.reg_param = reg_param
+        self.lr = lr
 
     def fit(self, data: np.ndarray, classes: np.ndarray):
         if data.shape[0] != classes.shape[0]:
@@ -31,12 +35,11 @@ class IRelief(IterativeRelief):
         old_v = np.ones(I, dtype=float)
 
         misses, hits = self._find_misses_hits(classes)
-        lr = 0.07  # FIXME must realize line search optimization
 
         ones = np.ones(I)
 
         while True:
-            v = old_v - lr * ((self.reg_param * ones - self._compute_margin(data, hits, misses, old_w)) * old_v)
+            v = old_v - self.lr * ((self.reg_param * ones - self._compute_margin(data, hits, misses, old_w)) * old_v)
             w = v ** 2
             old_v = v
 
@@ -54,8 +57,8 @@ class IRelief(IterativeRelief):
 
         for n in range(data.shape[0]):
             z = self._compute_sample_margin(data, n, dist_k, hits, misses)
-            print(z)
-            exponent = np.exp(-1 * np.array([old_w[j] * z[j] for j in range(I)]).sum())
+            power = -1 * (old_w * z).sum()
+            exponent = 0.9999999999999999999 if np.abs(power) >= 1000 else np.exp(-1 * (old_w * z).sum())
             coeff = exponent / (1 + exponent)
             margin += coeff * z
 

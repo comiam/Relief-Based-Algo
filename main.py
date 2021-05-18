@@ -34,7 +34,7 @@ def test_iterative_relief(data_t, classes_t):
 
 
 def test_irelief(data_t, classes_t):
-    relief = IRelief(kernel_width=7)
+    relief = IRelief(kernel_width=8000)
     return relief.fit(data_t, classes_t)
 
 
@@ -53,7 +53,7 @@ if __name__ == '__main__':
 
     classes = split_classes(classes)
     # test_turf(data, classes, df)
-    res = test_irelief(data, classes)
+    res = test_iterative_relief(data, classes)
     # print(res)
     ind_res = np.argsort(res)
 

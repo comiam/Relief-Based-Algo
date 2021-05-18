@@ -9,7 +9,7 @@ def find_interval(value: float, intervals: list[tuple[float, float]]):
         if i[0] <= value < i[1]:
             return it
         elif value == i[1] and i == intervals[-1]:
-            return it + 1
+            return it
         it += 1
     return np.NaN
 
