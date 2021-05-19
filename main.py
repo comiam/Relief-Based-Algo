@@ -1,14 +1,17 @@
 from IRelief import IRelief
 from IterativeRelief import IterativeRelief
+from VLSReliefF import VLSReliefF
 from data_utils.ClassDelemiter import split_classes
 from data_utils.ColumnSearch import search_column_by_array
-from data_utils.Parser import parse_csv
+from data_utils.Parser import parse_first_csv
 from RReliefF import RReliefF
 from Relief import Relief
 from ReliefF import ReliefF
 from TuRF import TuRF
 
 import numpy as np
+
+from iVLSRelief import iVLSReliefF
 
 
 def test_relief(data_t, classes_t):
@@ -18,13 +21,30 @@ def test_relief(data_t, classes_t):
 
 
 def test_relieff(data_t, classes_t):
-    relief = ReliefF(40, 2)
+    relief = ReliefF(100, 4)
 
     return np.array([relief.fit(data_t, classes_t) for i in range(10)]).mean(axis=0)
 
 
+def test_vlsrelieff(data_t, classes_t):
+    relief = VLSReliefF(100, 4)
+
+    return np.array([relief.fit(data_t, classes_t, 18, 4) for i in range(3)]).mean(axis=0)
+
+
+def test_ivlsrelieff(data_t, classes_t):
+    relief = iVLSReliefF(6, 100, 4, 0.5)
+
+    return relief.fit(data_t, classes_t, 10, 4)
+
+
 def test_rrelieff(data_t, classes_t):
-    relief = RReliefF(100, 4)
+    unique, counts = np.unique(classes_t, return_counts=True)
+
+    indexes = np.argsort(counts)
+    print(classes_t, ' ', counts, ' ', counts[indexes[0]])
+
+    relief = RReliefF(100, 5)
     return np.array([relief.fit(data_t, classes_t) for i in range(10)]).mean(axis=0)
 
 
@@ -34,12 +54,12 @@ def test_iterative_relief(data_t, classes_t):
 
 
 def test_irelief(data_t, classes_t):
-    relief = IRelief(kernel_width=8000)
+    relief = IRelief(reg_param=1, kernel_width=1, lr=0.005, stop_criterion=0.01)
     return relief.fit(data_t, classes_t)
 
 
 def test_turf(data_t, classes_t, df):
-    relief = TuRF(iterations=100, knn=2, turf_iteration_count=15, delete_features_per_iteration=1)
+    relief = TuRF(iterations=150, knn=4, turf_iteration_count=5, delete_features_per_iteration=3)
 
     res = relief.fit(data_t, classes_t)
 
@@ -48,17 +68,21 @@ def test_turf(data_t, classes_t, df):
         print(search_column_by_array(res[0][:, i], df), ": ", res[1][i])
 
 
-if __name__ == '__main__':
-    data, classes, df = parse_csv("data/cleared.csv", True)
+def relief_exec():
+    data, classes, df = parse_first_csv("data/first.csv", True)
 
     classes = split_classes(classes)
-    # test_turf(data, classes, df)
-    res = test_iterative_relief(data, classes)
+    # test_relieff(data, classes)
+    res = test_ivlsrelieff(data, classes)
     # print(res)
     ind_res = np.argsort(res)
 
     for i in ind_res:
         print(df.columns[i], ": ", res.tolist()[i])
 
-    print("=======================")
-    test_relieff(data, classes)
+    # print("=======================")
+    # test_relieff(data, classes)
+
+
+if __name__ == '__main__':
+    relief_exec()

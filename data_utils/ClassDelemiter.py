@@ -14,13 +14,21 @@ def find_interval(value: float, intervals: list[tuple[float, float]]):
     return np.NaN
 
 
-def split_classes(classes: np.ndarray) -> np.ndarray:
+def split_classes(classes: np.ndarray, delete_last: int = 0) -> np.ndarray:
     bins = 1 + log(classes.shape[0], 2)
     min = np.amin(classes)
     max = np.amax(classes)
     length = (max - min) / int(bins)
 
     ints = [(min + length * i, min + length * (i + 1)) for i in range(int(bins))]
+
+    if delete_last != 0:
+        last_end_range = ints[-1][1]
+        ints = ints[:len(ints)-delete_last]
+        last_start_range = ints[-1][0]
+        del ints[-1]
+        ints.append((last_start_range, last_end_range))
+
     splitted = np.array([find_interval(c, ints) for c in classes])
 
     return splitted

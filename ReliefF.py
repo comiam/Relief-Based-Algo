@@ -5,9 +5,12 @@ import numpy as np
 
 # First upgrade of Relief algorithm, now there are non binary classification and used k NM and NH
 # https://link.springer.com/content/pdf/10.1023/A:1025667309714.pdf
+from ReliefUtils import _nn, _diff_value
+
+
 class ReliefF:
     def __init__(self, iterations: int = 100, knn: int = 10):
-        if knn < 0:
+        if knn <= 0:
             raise ValueError("invalid k count of neighbours!")
 
         self.iter = iterations
@@ -23,6 +26,8 @@ class ReliefF:
         w = np.array([0.] * data.shape[1])
 
         probs = self._class_frequencies(classes)
+        # rmax = np.array([np.amax(data[:, f]) for f in range(data.shape[1])])
+        # rmin = np.array([np.amin(data[:, f]) for f in range(data.shape[1])])
         # print(np.fromiter(probs.values(), dtype=float))
 
         for i in range(self.iter):
@@ -90,7 +95,7 @@ class ReliefF:
         rmax = np.amax(data[:, feature_index])
         rmin = np.amin(data[:, feature_index])
 
-        return np.abs(data[a, feature_index] - data[b, feature_index]) / (rmax if (rmax - rmin) == 0 else (rmax - rmin))
+        return np.abs(data[a, feature_index] - data[b, feature_index]) / (1 if (rmax - rmin) == 0 else (rmax - rmin))
 
     def _diff_both_nan(self, data: np.ndarray, classes: np.ndarray, feature_index: int, a: int, b: int) -> float:
         class0 = classes[a]

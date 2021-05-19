@@ -36,10 +36,10 @@ class IRelief(IterativeRelief):
 
         misses, hits = self._find_misses_hits(classes)
 
-        ones = np.ones(I)
+        reg_part = self.reg_param * np.ones(I)
 
         while True:
-            v = old_v - self.lr * ((self.reg_param * ones - self._compute_margin(data, hits, misses, old_w)) * old_v)
+            v = old_v - self.lr * ((reg_part - self._compute_margin(data, hits, misses, old_w)) * old_v)
             w = v ** 2
             old_v = v
 
@@ -56,10 +56,10 @@ class IRelief(IterativeRelief):
         margin = np.zeros(I)
 
         for n in range(data.shape[0]):
-            z = self._compute_sample_margin(data, n, dist_k, hits, misses)
-            power = -1 * (old_w * z).sum()
-            exponent = 0.9999999999999999999 if np.abs(power) >= 1000 else np.exp(-1 * (old_w * z).sum())
+            zn = self._compute_sample_margin(data, n, dist_k, hits, misses)
+            power = -1 * (old_w * zn).sum()
+            exponent = 0.9999999999999999999 if np.abs(power) >= 1000 else np.exp(power)
             coeff = exponent / (1 + exponent)
-            margin += coeff * z
+            margin += coeff * zn
 
         return margin
