@@ -10,8 +10,8 @@ class RReliefF(ReliefF):
     def __init__(self, iterations: int, knn: int = 10, sigma: float = 1.0):
         super().__init__(iterations, knn)
 
-        if knn < 0:
-            raise ValueError("invalid k count of neighbours!")
+        if sigma < 0:
+            raise ValueError("invalid kernel width!")
 
         self.sigma = sigma
 

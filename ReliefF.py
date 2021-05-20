@@ -5,9 +5,6 @@ import numpy as np
 
 # First upgrade of Relief algorithm, now there are non binary classification and used k NM and NH
 # https://link.springer.com/content/pdf/10.1023/A:1025667309714.pdf
-from ReliefUtils import _nn, _diff_value
-
-
 class ReliefF:
     def __init__(self, iterations: int = 100, knn: int = 10):
         if knn <= 0:

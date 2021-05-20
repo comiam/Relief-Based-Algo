@@ -1,5 +1,7 @@
 from IRelief import IRelief
 from IterativeRelief import IterativeRelief
+from SURF import SURF
+from SURFStar import SURFStar
 from VLSReliefF import VLSReliefF
 from data_utils.ClassDelemiter import split_classes
 from data_utils.ColumnSearch import search_column_by_array
@@ -26,6 +28,22 @@ def test_relieff(data_t, classes_t):
     return np.array([relief.fit(data_t, classes_t) for i in range(10)]).mean(axis=0)
 
 
+def test_surf(data_t, classes_t):
+    relief = SURF(300)
+    # print(relief.compute_avg_distance(data_t, classes_t))
+    relief.set_threshold(3)
+
+    return np.array([relief.fit(data_t, classes_t) for i in range(10)]).mean(axis=0)
+
+
+def test_surfstar(data_t, classes_t):
+    relief = SURFStar(300)
+    print(relief.compute_avg_distance(data_t, classes_t))
+    relief.set_threshold(relief.compute_avg_distance(data_t, classes_t) - 1)
+
+    return np.array([relief.fit(data_t, classes_t) for i in range(10)]).mean(axis=0)
+
+
 def test_vlsrelieff(data_t, classes_t):
     relief = VLSReliefF(100, 4)
 
@@ -33,9 +51,9 @@ def test_vlsrelieff(data_t, classes_t):
 
 
 def test_ivlsrelieff(data_t, classes_t):
-    relief = iVLSReliefF(6, 100, 4, 0.5)
+    relief = iVLSReliefF(6, 270, 4, 0.4)
 
-    return relief.fit(data_t, classes_t, 10, 4)
+    return relief.fit(data_t, classes_t, 20, 4)
 
 
 def test_rrelieff(data_t, classes_t):
@@ -73,7 +91,7 @@ def relief_exec():
 
     classes = split_classes(classes)
     # test_relieff(data, classes)
-    res = test_ivlsrelieff(data, classes)
+    res = test_surfstar(data, classes)
     # print(res)
     ind_res = np.argsort(res)
 

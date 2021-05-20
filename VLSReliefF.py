@@ -5,7 +5,8 @@ from numpy import inf
 
 from ReliefF import ReliefF
 
-
+# Upgrade of Relief, which can detect epistatic interactions
+# https://ieeexplore.ieee.org/document/4675767
 class VLSReliefF(ReliefF):
     def __init__(self, iterations: int = 100, knn: int = 10):
         super().__init__(iterations, knn)

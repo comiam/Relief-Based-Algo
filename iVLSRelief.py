@@ -3,6 +3,8 @@ import numpy as np
 from VLSReliefF import VLSReliefF
 
 
+# New parody of TuRF, but more powerful
+# https://ieeexplore.ieee.org/document/4675767
 class iVLSReliefF(VLSReliefF):
     def __init__(self, final_count_of_attrs: int, iterations: int = 100, knn: int = 10, percentile_rank: float = 0.5):
         super().__init__(iterations, knn)
@@ -22,13 +24,15 @@ class iVLSReliefF(VLSReliefF):
             w = super().fit(data_copy, classes, subseq_count, subseq_length)
 
             ind = np.argsort(w)
-            if len(ind) * (1.0 - self.percentile_rank) <= self.final_count_of_attrs:
+            if int(len(ind) * (1.0 - self.percentile_rank)) <= self.final_count_of_attrs:
                 total_deletions = len(ind) - self.final_count_of_attrs
             else:
                 total_deletions = int(len(ind) * self.percentile_rank)
 
-            data_copy = np.delete(data_copy, ind[total_deletions:], axis=1)
-            w = np.delete(w, ind[total_deletions:])
+            print(total_deletions)
+
+            data_copy = np.delete(data_copy, ind[-total_deletions:], axis=1)
+            w = np.delete(w, ind[-total_deletions:])
 
             if data_copy.shape[1] <= self.final_count_of_attrs:
                 return w
