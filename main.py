@@ -1,7 +1,10 @@
 from IRelief import IRelief
 from IterativeRelief import IterativeRelief
+from MultiSURF import MultiSURF
+from MultiSURFStar import MultiSURFStar
 from SURF import SURF
 from SURFStar import SURFStar
+from SWRF import SWRF
 from VLSReliefF import VLSReliefF
 from data_utils.ClassDelemiter import split_classes
 from data_utils.ColumnSearch import search_column_by_array
@@ -20,6 +23,24 @@ def test_relief(data_t, classes_t):
     relief = Relief()
     for i in range(10):
         print(relief.fit(data_t, classes_t))
+
+
+def test_swrf(data_t, classes_t):
+    relief = SWRF(25, 4)
+
+    return relief.fit(data_t, classes_t)
+
+
+def test_multi_surf(data_t, classes_t):
+    relief = MultiSURF(25)
+
+    return relief.fit(data_t, classes_t)
+
+
+def test_multi_surf_star(data_t, classes_t):
+    relief = MultiSURFStar(25)
+
+    return relief.fit(data_t, classes_t)
 
 
 def test_relieff(data_t, classes_t):
@@ -91,7 +112,7 @@ def relief_exec():
 
     classes = split_classes(classes)
     # test_relieff(data, classes)
-    res = test_surfstar(data, classes)
+    res = test_multi_surf_star(data, classes)
     # print(res)
     ind_res = np.argsort(res)
 
